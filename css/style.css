@@ -1,0 +1,25 @@
+.countries {
+    fill: black;
+    stroke: white;
+    stroke-width: 0.5px;
+}
+
+.gratLines {
+    fill: none;
+    stroke: #999;
+    stroke-width: 1px;
+}
+
+.gratBackground {
+    fill: #D5E3FF;
+}
+
+.map {
+    border: medium solid #999;
+}
+
+.wCountries{
+	fill: #FFF;
+    stroke: #CCC;
+    stroke-width: .5px;
+}
