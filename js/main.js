@@ -44,65 +44,10 @@ function setMap(){
         var allCountries = topojson.feature(world, world.objects.AllCountries),
 			africanCountries = topojson.feature(africa, africa.objects.AfricanCountries).features;
 			
-		//variables for data join
-    /*var attrArray = ["ImpUrbSanPct", "ImpWatSrcPct", "PopDen", "UrbPopPct", "GDPGroPct"];
-
-    //loop through csv to assign each set of csv attribute values to geojson region
-    for (var i=0; i<csvData.length; i++){
-        var csvCountry = csvData[i]; //the current region
-        var csvKey = csvCountry.Country; //the CSV primary key
-
-        //loop through geojson regions to find correct region
-        for (var a=0; a<africanCountries.length; a++){
-
-            var geojsonProps = africanCountries[a].properties; //the current region geojson properties
-            var geojsonKey = geojsonProps.COUNTRY; //the geojson primary key
-
-            //where primary keys match, transfer csv data to geojson properties object
-            if (geojsonKey == csvKey){
-
-                //assign all attributes and values
-                attrArray.forEach(function(attr){
-                    var val = parseFloat(csvCountry[attr]); //get csv attribute value
-                    geojsonProps[attr] = val; //assign attribute and value to geojson properties
-                });
-            };
-        };
-    };*/
-			
-			
-		/*var graticule = d3.geoGraticule()
-            .step([10, 10]); //place graticule lines every 5 degrees of longitude and latitude
-			
-		//create graticule background
-        var gratBackground = map.append("path")
-            .datum(graticule.outline()) //bind graticule background
-            .attr("class", "gratBackground") //assign class for styling
-            .attr("d", path) //project graticule
-			
-		//create graticule lines
-        var gratLines = map.selectAll(".gratLines") //select graticule elements that will be created
-            .data(graticule.lines()) //bind graticule lines to each element to be created
-            .enter() //create an element for each datum
-            .append("path") //append each element to the svg as a path element
-            .attr("class", "gratLines") //assign class for styling
-            .attr("d", path); //project graticule lines*/
-			
 		var wCountries = map.append("path")
             .datum(allCountries)
             .attr("class", "wCountries")
             .attr("d", path);
-			
-		//add African countries to map
-        /*var countries = map.selectAll(".countries")
-            .data(africanCountries)
-            .enter()
-            .append("path")
-            .attr("class", function(d){
-                return "countries " + d.properties.COUNTRY.replace(/ /g,'-');
-            })
-            .attr("d", path);
-		console.log(africanCountries);*/
 		
 		//join csv data to GeoJSON enumeration units
         africanCountries = joinData(africanCountries, csvData);
@@ -170,29 +115,28 @@ function joinData(africanCountries, csvData){
 
 function setEnumerationUnits(africanCountries, map, path, colorScale){
     //...REGIONS BLOCK FROM MODULE 8
-	//add African countries to map
-        var countries = map.selectAll(".countries")
-            .data(africanCountries)
-            .enter()
-            .append("path")
-            .attr("class", function(d){
-                return "countries " + d.properties.COUNTRY.replace(/ /g,'-');
-            })
-            .attr("d", path);
-			/*.style("fill", function(d){
+    var regions = map.selectAll(".countries")
+        .data(africanCountries)
+        .enter()
+        .append("path")
+        .attr("class", function(d){
+            return "countries " + d.properties.COUNTRY;
+        })
+        .attr("d", path)
+        .style("fill", function(d){
             return choropleth(d.properties, colorScale);
-        });*/
-		console.log(africanCountries);
+        });
+		
 };
 
 //function to create color scale generator
 function makeColorScale(data){
     var colorClasses = [
-        "#D4B9DA",
-        "#C994C7",
-        "#DF65B0",
-        "#DD1C77",
-        "#980043"
+        "#99d8c9",
+        "#66c2a4",
+        "#41ae76",
+        "#238b45",
+        "#005824"
     ];
 
     //create color scale generator
@@ -226,10 +170,10 @@ function choropleth(props, colorScale){
 
 //function to create coordinated bar chart
 function setChart(csvData, colorScale){
-    //chart frame dimensions
+//chart frame dimensions
     var chartWidth = window.innerWidth * 0.425,
-        chartHeight = 473;
-		leftPadding = 25,
+        chartHeight = 473,
+        leftPadding = 25,
         rightPadding = 2,
         topBottomPadding = 5,
         chartInnerWidth = chartWidth - leftPadding - rightPadding,
@@ -242,52 +186,52 @@ function setChart(csvData, colorScale){
         .attr("width", chartWidth)
         .attr("height", chartHeight)
         .attr("class", "chart");
-		
-	//create a rectangle for chart background fill
+
+    //create a rectangle for chart background fill
     var chartBackground = chart.append("rect")
         .attr("class", "chartBackground")
         .attr("width", chartInnerWidth)
         .attr("height", chartInnerHeight)
         .attr("transform", translate);
-		
-	//create a scale to size bars proportionally to frame
+
+    //create a scale to size bars proportionally to frame and for axis
     var yScale = d3.scaleLinear()
         .range([463, 0])
         .domain([0, 100]);
-		
-	//set bars for each province
-    var bars = chart.selectAll(".bars")
+
+    //set bars for each province
+    var bars = chart.selectAll(".bar")
         .data(csvData)
         .enter()
         .append("rect")
-		.sort(function(a, b){
-            return a[expressed]-b[expressed]
+        .sort(function(a, b){
+            return b[expressed]-a[expressed]
         })
         .attr("class", function(d){
-            return "bars " + d.Country;
+            return "bar " + d.adm1_code;
         })
-        .attr("width", chartWidth / csvData.length - 1)
+        .attr("width", chartInnerWidth / csvData.length - 1)
         .attr("x", function(d, i){
-            return i * (chartWidth / csvData.length) + leftPadding;
+            return i * (chartInnerWidth / csvData.length) + leftPadding;
         })
-        .attr("height", function(d){
-            return yScale(parseFloat(d[expressed]));
+        .attr("height", function(d, i){
+            return 463 - yScale(parseFloat(d[expressed]));
         })
-        .attr("y", function(d){
-            return chartHeight - yScale(parseFloat(d[expressed])) + topBottomPadding;
-        });
-		/*.style("fill", function(d){
+        .attr("y", function(d, i){
+            return yScale(parseFloat(d[expressed])) + topBottomPadding;
+        })
+        .style("fill", function(d){
             return choropleth(d, colorScale);
-        });*/
-		
-		
-	var chartTitle = chart.append("text")
+        });
+
+    //create a text element for the chart title
+    var chartTitle = chart.append("text")
         .attr("x", 40)
         .attr("y", 40)
         .attr("class", "chartTitle")
         .text("Number of Variable " + expressed[3] + " in each region");
-		
-	//create vertical axis generator
+
+    //create vertical axis generator
     var yAxis = d3.axisLeft()
         .scale(yScale);
 
