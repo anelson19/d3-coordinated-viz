@@ -1,6 +1,6 @@
 (function(){
 //variables for data join
-    var attrArray = ["ImpUrbSanPct", "ImpWatSrcPct", "PopDen", "UrbPopPct", "GDPGroPct"];
+    var attrArray = ["Improved Urban Sanitation Facilities", "Improved Urban Water Source", "Population Density", "Urban Population", "GDP Growth"];
 	var expressed = attrArray[0]; //initial attribute
 	
 	var chartWidth = window.innerWidth * 0.425,
@@ -16,6 +16,14 @@
     var yScale = d3.scaleLinear()
         .range([463, 0])
         .domain([0, 220]);
+		
+	var colorClasses = [
+        "#99d8c9",
+        "#66c2a4",
+        "#41ae76",
+        "#238b45",
+        "#005824"
+    ];
 
 window.onload = setMap();
 
@@ -47,21 +55,21 @@ function setMap(){
     d3.queue()
         .defer(d3.csv, "data/d3_lab2data.csv") //load attributes from csv
 		.defer(d3.json, "data/AllCountries.topojson") //load background spatial data
-        .defer(d3.json, "data/African_Countries.topojson") //load choropleth spatial data
+        .defer(d3.json, "data/AfricanCountries_(2).topojson") //load choropleth spatial data
         .await(callback);
 		
 	function callback(error, csvData, world, africa){
 		
 		//place graticule on the map
-        setGraticule(map, path);
+        //setGraticule(map, path);
 		
         var allCountries = topojson.feature(world, world.objects.AllCountries),
 			africanCountries = topojson.feature(africa, africa.objects.AfricanCountries).features;
 			
-		var wCountries = map.append("path")
+		/*var wCountries = map.append("path")
             .datum(allCountries)
             .attr("class", "wCountries")
-            .attr("d", path);
+            .attr("d", path);*/
 		
 		//join csv data to GeoJSON enumeration units
         africanCountries = joinData(africanCountries, csvData);
@@ -152,7 +160,7 @@ function setEnumerationUnits(africanCountries, map, path, colorScale){
 		.on("mousemove", moveLabel);
 		console.log(countries);
 	var desc = countries.append("desc")
-        .text('{"stroke": "#000", "stroke-width": "0.5px"}');
+        .text('{"stroke": "white", "stroke-width": "0.5px"}');
 		
 		/*.on("mouseover", function(d){
             highlight(d.properties);
@@ -203,7 +211,7 @@ function choropleth(props, colorScale){
     if (typeof val == 'number' && !isNaN(val)){
         return colorScale(val);
     } else {
-        return "#CCC";
+        return "#8e8e8e";
     };
 };
 
@@ -244,9 +252,9 @@ function setChart(csvData, colorScale){
     //create a text element for the chart title
     var chartTitle = chart.append("text")
         .attr("x", 40)
-        .attr("y", 40)
+        .attr("y", 30)
         .attr("class", "chartTitle")
-        .text("Number of Variable " + expressed[3] + " in each country");
+        .text(expressed + " in each country");
 
     //create vertical axis generator
     var yAxis = d3.axisLeft()
@@ -352,7 +360,7 @@ function updateChart(bars, n, colorScale){
 		
 	//at the bottom of updateChart()...add text to chart title
     var chartTitle = d3.select(".chartTitle")
-        .text("Number of Variable " + expressed[3] + " in each country");
+        .text(expressed + " in each country");
 };
 
 //function to highlight enumeration units and bars
@@ -372,9 +380,9 @@ function dehighlight(props){
             return getStyle(this, "stroke")
         })
         .style("stroke-width", function(){
-            return getStyle(this, "stroke-width")
+            return getStyle(this, "stroke-width") 
         });
-
+		
     function getStyle(element, styleName){
         var styleText = d3.select(element)
             .select("desc")
@@ -412,6 +420,23 @@ function setLabel(props){
     //label content
     var labelAttribute = "<h1>" + props[expressed] +
         "</h1><b>" + expressed + "</b>";
+		
+	if (Boolean(props[expressed]) == true) {
+        if (expressed == "Improved Urban Sanitation Facilities") {
+            labelAttribute = "<h1>" + props[expressed]+"%</h1>" + "of urban population with access"
+        } else if (expressed == "Improved Urban Water Source") {
+            labelAttribute = "<h1>" + props[expressed]+"%</h1>" + "of urban population with access"
+        } else if (expressed == "Population Density") {
+            labelAttribute = "<h1>" + props[expressed]+"</h1>" + "people per sq. km"
+        } else if (expressed == "Urban Population") {
+            labelAttribute = "<h1>" + props[expressed]+"%</h1>" + "of total"
+        } else if (expressed == "GDP Growth") {
+            labelAttribute = "<h1>" + props[expressed]+"%</h1>" + "growth"
+        };
+    } else { //if no data associated with selection, display "No data"
+        labelAttribute = "<h1>No Data</h1>";
+    };
+		
 
     //create info label div
     var infolabel = d3.select("body")
