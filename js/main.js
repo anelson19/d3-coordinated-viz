@@ -154,6 +154,18 @@ function setEnumerationUnits(africanCountries, map, path, colorScale){
 	var desc = countries.append("desc")
         .text('{"stroke": "#000", "stroke-width": "0.5px"}');
 		
+		/*.on("mouseover", function(d){
+            highlight(d.properties);
+        })
+         .on("mouseout", function(d){
+            dehighlight(d.properties);
+        })
+         .on("mousemove", moveLabel)
+            var countriesColor = countries.append("desc")
+            .text(function(d) {
+                return choropleth(d.properties, colorScale);
+            });*/
+		
 };
 
 //function to create color scale generator
@@ -224,7 +236,7 @@ function setChart(csvData, colorScale){
         .attr("width", chartInnerWidth / csvData.length - 1)
 		.on("mouseover", highlight)
 		.on("mouseout", dehighlight)
-		.on("mousemove", moveLabel);
+		.on("mousemove", moveLabel)
 		
 	var desc = bars.append("desc")
         .text('{"stroke": "none", "stroke-width": "0px"}');
@@ -321,6 +333,7 @@ function updateChart(bars, n, colorScale){
     bars.attr("x", function(d, i){
             return i * (chartInnerWidth / n) + leftPadding;
         })
+		
         //size/resize bars
         .attr("height", function(d, i){
 			var de = parseFloat(d[expressed]);
@@ -346,8 +359,8 @@ function updateChart(bars, n, colorScale){
 function highlight(props){
     //change stroke
     var selected = d3.selectAll("." + props.COUNTRY.replace(/ /g, '-'))
-        .style("stroke", "blue")
-        .style("stroke-width", "2");
+        .style("stroke", "lime")
+        .style("stroke-width", "3");
 		console.log(props.COUNTRY);
 	setLabel(props);
 };
@@ -375,6 +388,25 @@ function dehighlight(props){
 	d3.select(".infolabel")
         .remove();
 };
+
+//function to highlight enumeration units and bars
+/*function highlight(props){
+    //change stroke
+    var selected = d3.selectAll("." + props.COUNTRY)
+        .style(
+            "fill", "#FFC42A"
+        );
+        setLabel(props);
+};
+
+function dehighlight(props) {
+     var selection = d3.selectAll("."+props.COUNTRY);
+
+    var fillColor = selection.select("desc").text();
+    selection.style("fill", fillColor); 
+    d3.select(".infolabel")
+        .remove(); 
+};*/
 
 function setLabel(props){
     //label content

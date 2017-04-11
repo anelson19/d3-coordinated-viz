@@ -6,16 +6,17 @@
 
 .gratLines {
     fill: none;
-    stroke: #999;
+    stroke: white;
     stroke-width: 1px;
 }
 
 .gratBackground {
-    fill: #D5E3FF;
+    fill: lightblue;
 }
 
 .map {
-    border: medium solid #999;
+    border: medium solid white;
+	border-radius: 10px;
 	margin: 10px 0 0 20px;
 }
 
@@ -39,15 +40,16 @@
     font-family: sans-serif;
     font-size: 1.5em;
     font-weight: bold;
+	fill: white;
 }
 
 .chartBackground {
-    fill: rgba(128,128,128,.2);
+    fill: none;
 }
 
 .chartFrame {
     fill: none;
-    stroke: #999;
+    stroke: white;
     stroke-width: 3px;
     shape-rendering: crispEdges;
 }
@@ -55,20 +57,29 @@
 .axis path,
 .axis line {
     fill: none;
-    stroke: #999;
+    stroke: white;
     stroke-width: 1px;
     shape-rendering: crispEdges;
 }
 
 .axis text {
     font-family: sans-serif;
-    font-size: 0.8em;
-    fill: #999;
+    font-size: 0.9em;
+    fill: white;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
 }
 
 .dropdown {
     position: absolute;
-    top: 30px;
+    top: 130px;
     left: 40px;
     z-index: 10;
     font-family: sans-serif;
@@ -77,6 +88,16 @@
     padding: 2px;
     border: 1px solid #999;
     box-shadow: 2px 2px 4px #999;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
 }
 
 option {
@@ -90,8 +111,11 @@ option {
     color: #fff;
     background-color: #000;
     border: solid thin #fff;
+	border-radius: 10px;
+	opacity: 0.88;
     padding: 5px 10px;
     top: -75px;
+	font-family: sans-serif;
 }
 
 .infolabel h1 {
@@ -99,4 +123,24 @@ option {
     padding: 0;
     display: inline-block;
     line-height: 1em;
+}
+
+body{
+	background: black;
+}
+
+#title{
+	text-align: center;
+	margin-top: -20px;
+    height: 80px;
+    width: 100%;
+	
+}
+
+h2{
+	font-size:50px;
+	font-family: sans-serif;
+	color: white;
+	text-shadow: 2px 2px 4px green;
+
 }
